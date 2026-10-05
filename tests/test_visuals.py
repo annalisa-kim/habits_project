@@ -3,6 +3,9 @@
 import matplotlib
 matplotlib.use("Agg")  # headless backend: no GUI windows during tests
 import matplotlib.pyplot as plt
+# Tests are headless: stub out show() so it never tries (and warns about)
+# opening a window — the charts are still fully built and validated.
+plt.show = lambda *args, **kwargs: None
 
 from analytics.visuals import (show_completions_by_period,
                                show_completions_by_category)

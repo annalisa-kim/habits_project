@@ -1,10 +1,6 @@
 """Predefined habits with 4 weeks of example tracking data (test fixture).
-
-The assignment requires 5 predefined habits (at least one daily and one
-weekly) each with 4 weeks of example data. The data is generated relative
-to "today" so streaks and analytics always look realistic, and includes
-intentional gaps so that broken habits and partial streaks can be observed
-and tested.
+The assignment requires 5 predefined habits (at least one daily and one weekly) each with 4 weeks of example data. 
+The data is generated relative to "today" so streaks and analytics always look realistic, and includes intentional gaps so that broken habits and partial streaks can be observed and tested.
 """
 
 from datetime import datetime, timedelta
@@ -36,7 +32,7 @@ def get_default_habits():
         completions=[_days_ago(d, hour=h) for d in range(28) for h in (8, 20)],
     )
 
-    # Daily, imperfect: missed days 5, 6 and 14 → longest streak of 5 days
+    # Daily, imperfect: missed days 5, 6 and 14 → longest run of 13 days
     read = Habit(
         name="Read 20 pages", periodicity="daily", category="Study", goal=1,
         start_date=(today - timedelta(days=28)).date(),

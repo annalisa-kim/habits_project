@@ -179,7 +179,7 @@ def show_all_habits():
             noun = PERIOD_NOUN.get(h.periodicity, "period")
             flame = f" 🔥 {streak}-{noun} streak" if streak else ""
             when = PERIOD_WORD.get(h.periodicity, "now")
-            print(f"\n• {h.name} ({h.periodicity}){shared_label(h)}{flame}")
+            print(f"\n• {h.name} ({h.periodicity}, since {h.start_date}){shared_label(h)}{flame}")
             print(f"  {show_progress_bar(done_now, h.goal)} {when}")
     pause_and_return()
 
@@ -251,6 +251,54 @@ def share_habit():
         print(f"✅ '{habit.name}' is now shared with {username}!")
     pause_and_return()
 
+def edit_habit_cli():
+    """Edit an existing habit's name, category or goal.
+
+    Pressing Enter keeps the current value. Periodicity is deliberately not
+    editable: changing it would retroactively redefine the meaning of the
+    habit's streak history. For a shared habit, changes apply to all members.
+    """
+    habits = load_habits(current_user.user_id)
+    if not habits:
+        print("\n📭 No habits to edit.")
+        pause_and_return()
+        return
+
+    print("\n✏️ Choose habit to edit:")
+    for i, h in enumerate(habits, 1):
+        print(f"{i}. {h.name} ({h.periodicity}){shared_label(h)}")
+    choice = input("Choose number: ")
+    if not choice.isdigit() or not (1 <= int(choice) <= len(habits)):
+        print("❌ Invalid selection.")
+        pause_and_return()
+        return
+    habit = habits[int(choice) - 1]
+    if habit.shared:
+        print("ℹ️ This habit is shared: changes will apply for all members.")
+    print("Press Enter to keep the current value.")
+
+    new_name = input(f"Name [{habit.name}]: ").strip()
+    if new_name and new_name != habit.name:
+        if any(h.name == new_name for h in habits):
+            print("⚠️ You already have a habit with that name — name unchanged.")
+        else:
+            habit.name = new_name
+            
+    print("Press Enter to keep the current value (for category: answer n).")
+    if input(f"Category [{habit.category or '-'}] — change it? (y/n): ").lower() == "y":
+        habit.category = choose_category()
+
+    new_goal = input(f"Goal per {habit.periodicity} period "
+                     f"[{habit.goal or '-'}] ('-' to remove): ").strip()
+    if new_goal == "-":
+        habit.goal = None
+    elif new_goal.isdigit() and int(new_goal) > 0:
+        habit.goal = int(new_goal)
+
+    save_habit(habit, current_user.user_id)
+    print(f"\n✅ Habit updated: {habit.name} "
+          f"({habit.periodicity}, goal: {habit.goal or '-'})")
+    pause_and_return()
 
 def delete_habit_cli():
     """Delete a habit — for everyone if private, only for me if shared."""
@@ -404,34 +452,36 @@ def welcome_flow():
     """Login, then loop over the main menu until the user exits."""
     login_or_register()
     while True:
-        print("\n🌟 What do you want to do?")
         print("1. ➕ Create habit")
-        print("2. ✅ Track progress")
-        print("3. 📋 Show habits")
-        print("4. 🤝 Share habit")
-        print("5. 📊 Analytics")
-        print("6. 💪 Show mood history")
-        print("7. 🎖️ Show badges")
-        print("8. 🗑️ Delete habit")
-        print("9. 👋 Exit")
+        print("2. ✏️ Edit habit")
+        print("3. ✅ Track progress")
+        print("4. 📋 Show habits")
+        print("5. 🤝 Share habit")
+        print("6. 📊 Analytics")
+        print("7. 💪 Show mood history")
+        print("8. 🎖️ Show badges")
+        print("9. 🗑️ Delete habit")
+        print("10. 👋 Exit")
         ch = input("Select: ")
         if ch == "1":
             create_habit()
         elif ch == "2":
-            track_habit_progress()
+            edit_habit_cli()
         elif ch == "3":
-            show_all_habits()
+            track_habit_progress()
         elif ch == "4":
-            share_habit()
+            show_all_habits()
         elif ch == "5":
-            analytics_menu()
+            share_habit()
         elif ch == "6":
-            show_all_moods()
+            analytics_menu()
         elif ch == "7":
-            show_badges()
+            show_all_moods()
         elif ch == "8":
-            delete_habit_cli()
+            show_badges()
         elif ch == "9":
+            delete_habit_cli()
+        elif ch == "10":
             print("👋 Goodbye!")
             break
         else:

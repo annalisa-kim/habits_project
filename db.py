@@ -160,14 +160,19 @@ def save_habit(habit: Habit, user_id: int):
     """
     with connect() as conn:
         cursor = conn.cursor()
-        row = cursor.execute("""
-            SELECT h.habit_id FROM habits h
-            JOIN habit_members m ON m.habit_id = h.habit_id
-            WHERE h.name = ? AND m.user_id = ?
-        """, (habit.name, user_id)).fetchone()
+        # Prefer the primary key: it stays stable even when the habit is
+        # renamed. Fall back to (name, user) for habits never saved before.
+        if habit.habit_id is not None:
+            row = (habit.habit_id,)
+        else:
+            row = cursor.execute("""
+                SELECT h.habit_id FROM habits h
+                JOIN habit_members m ON m.habit_id = h.habit_id
+                WHERE h.name = ? AND m.user_id = ?
+            """, (habit.name, user_id)).fetchone()
 
         payload = (
-            habit.periodicity, habit.category, habit.goal,
+            habit.name, habit.periodicity, habit.category, habit.goal,
             habit.start_date.isoformat(), habit.created_at.isoformat(),
             habit.progress, json.dumps(habit.badges), json.dumps(habit.mood),
         )
@@ -175,17 +180,17 @@ def save_habit(habit: Habit, user_id: int):
         if row:
             habit.habit_id = row[0]
             cursor.execute("""
-                UPDATE habits SET periodicity = ?, category = ?, goal = ?,
-                    start_date = ?, created_at = ?, progress = ?,
+                UPDATE habits SET name = ?, periodicity = ?, category = ?,
+                    goal = ?, start_date = ?, created_at = ?, progress = ?,
                     badges = ?, mood = ?
                 WHERE habit_id = ?
             """, payload + (habit.habit_id,))
         else:
             cursor.execute("""
-                INSERT INTO habits (periodicity, category, goal, start_date,
-                    created_at, progress, badges, mood, name)
+                INSERT INTO habits (name, periodicity, category, goal,
+                    start_date, created_at, progress, badges, mood)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, payload + (habit.name,))
+            """, payload)
             habit.habit_id = cursor.lastrowid
             cursor.execute(
                 "INSERT OR IGNORE INTO habit_members (habit_id, user_id) "

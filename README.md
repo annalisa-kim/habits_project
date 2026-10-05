@@ -80,22 +80,25 @@ Enter your username: demo
 
 🌟 What do you want to do?
 1. ➕ Create habit
-2. ✅ Track progress
-3. 📋 Show habits
-4. 💪 Show mood history
-5. 📊 Analytics
-6. 🎖️ Show badges
-7. 🗑️ Delete habit
-8. 👋 Exit
+2. ✏️ Edit habit
+3. ✅ Track progress
+4. 📋 Show habits
+5. 🤝 Share habit
+6. 📊 Analytics
+7. 💪 Show mood history
+8. 🎖️ Show badges
+9. 🗑️ Delete habit
+10. 👋 Exit
 ```
 
 - **Create a habit**: choose option `1`, enter a name, pick a periodicity (daily/weekly/monthly/yearly), a category and an optional per-period goal.
-- **Complete a task**: choose option `2` and select the habit to check off.
+- **Edit a habit**: choose option `2`
+- **Complete a task**: choose option `3` and select the habit to check off.
   The completion timestamp — and who completed it — is recorded automatically.
-- **Share a habit**: choose option `4`, pick the habit and enter the other user's username (they must have logged in at least once). 
+- **Share a habit**: choose option `5`, pick the habit and enter the other user's username (they must have logged in at least once). 
   The habit then appears in their list too, marked `🤝 shared with: ...`, and any member can check it off. 
   Deleting a shared habit removes it only for you; the habit disappears entirely when the last member leaves it.
-- **Analyse your habits**: choose option `5`; from there you can list habits, filter by periodicity, view longest streaks, spot broken habits, see member contributions for shared habits and plot charts.
+- **Analyse your habits**: choose option `6`; from there you can list habits, filter by periodicity, view longest streaks, spot broken habits, see member contributions for shared habits and plot charts.
 
 ### Trying shared habits with the demo data
 
