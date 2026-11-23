@@ -47,7 +47,7 @@ tracksy/
 
 ## Installation
 
-Requires **Python 3.7+** (tested with 3.10–3.12).
+Requires **Python 3.7+** (tested with 3.9–3.12).
 
 ```bash
 # 1. Clone / unzip the project, then from the project root:
