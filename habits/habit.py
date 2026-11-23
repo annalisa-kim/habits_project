@@ -6,10 +6,9 @@ from datetime import datetime
 class Habit:
     """A habit with a task specification, a periodicity and its tracking data.
 
-    A habit can be *shared*: it may belong to several users (household
-    members). Every check-off is stored as a record ``(user_id, timestamp)``
-    so the app knows both *when* and *by whom* a task was completed. Streaks
-    always belong to the whole group of members.
+    A habit can be *shared*: it may belong to several users (household members).
+    Every check-off is stored as a record ``(user_id, timestamp)`` so the app knows both *when* and *by whom* a task was completed.
+    Streaks always belong to the whole group of members.
 
     Attributes:
         name: Short task specification, e.g. ``"Clean the bathroom"``.

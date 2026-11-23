@@ -1,12 +1,10 @@
 """Analytics module implemented with a functional programming approach.
 
-All functions in this module are pure: they take habits (and optionally a
-reference datetime ``now``) as input and return values without mutating any
-state. Streaks are computed by mapping completion timestamps onto calendar
+All functions in this module are pure: they take habits (and optionally areference datetime ``now``) as input and return values without mutating anystate. 
+Streaks are computed by mapping completion timestamps onto calendar
 *period indices* (days, ISO weeks, months or years) so that:
 
-* completing a weekly habit on Monday and the next one on Friday of the
-  following week still counts as consecutive weeks;
+* completing a weekly habit on Monday and the next one on Friday of the following week still counts as consecutive weeks;
 * several completions within the same period count only once;
 * a missed period always breaks the streak.
 """
@@ -20,8 +18,7 @@ from functools import reduce
 def period_index(dt, periodicity):
     """Map a datetime/date onto a consecutive integer index for its period.
 
-    Two completions belong to the same period iff they share the same index,
-    and two periods are consecutive iff their indices differ by exactly 1.
+    Two completions belong to the same period iff they share the same index, and two periods are consecutive if their indices differ by exactly 1.
 
     Args:
         dt: A ``datetime`` or ``date`` of a completion.

@@ -1,16 +1,14 @@
 # Tracksy 🌟 — A CLI Habit Tracker
 
 Tracksy is a Python backend for a habit tracking app.
-Users create habits with a task specification and a eriodicity (daily, weekly, monthly or yearly), check them off over time, and analyse their progress: 
+Users create habits with a task specification and a periodicity (daily, weekly, monthly or yearly), check them off over time, and analyse their progress: 
 streaks, broken habits, completions per period, plus optional charts, badges and mood tracking.
 
 ## Features
 
 - Multi-user support (simple username login/registration)
-- Shared habits: share a habit (e.g. household chores) with other
-  users; every member sees it, any member can check it off, the streak
-  belongs to the group, and analytics show who contributed most
-- Create, complete ("check off") and delete habits
+- Shared habits: share a habit (e.g. household chores) with other users; every member sees it, any member can check it off, the streak belongs to the group, and analytics show who contributed most
+- Create, edit, complete ("check off") and delete habits
 - Daily and weekly habits (plus monthly and yearly)
 - Streak computation based on calendar periods (days / ISO weeks / months / years)
 - Analytics module written in a functional programming style:
@@ -42,6 +40,8 @@ tracksy/
 ├── load_fixtures.py      # Script that loads the example data into the DB
 ├── main.py               # CLI entry point (interactive menu)
 ├── README.md             # This documentation
+├── screenshots/          # Example output and test-run screenshots
+├── pytest.ini            # Pytest configuration (filters third-party warnings)
 └── requirements.txt      # Dependencies (matplotlib, pytest)
 ```
 
@@ -76,9 +76,8 @@ To explore the predefined example data, log in as **demo** after running `load_f
 ```
 👤 Welcome to Tracksy!
 Enter your username: demo
-✅ Welcome back, demo!
 
-🌟 What do you want to do?
+✅ Welcome back, demo!
 1. ➕ Create habit
 2. ✏️ Edit habit
 3. ✅ Track progress
@@ -92,7 +91,8 @@ Enter your username: demo
 ```
 
 - **Create a habit**: choose option `1`, enter a name, pick a periodicity (daily/weekly/monthly/yearly), a category and an optional per-period goal.
-- **Edit a habit**: choose option `2`
+- **Edit a habit**: choose option `2` to change a habit's name, category or per-period goal (press Enter to keep a value). 
+  Periodicity is intentionally not editable, since changing it would redefine the meaning of past streaks.
 - **Complete a task**: choose option `3` and select the habit to check off.
   The completion timestamp — and who completed it — is recorded automatically.
 - **Share a habit**: choose option `5`, pick the habit and enter the other user's username (they must have logged in at least once). 
@@ -118,7 +118,7 @@ In the *Analytics* menu, option `7` shows who contributed:
 - demo: 2
 ```
 
-To share one of your own habits, use menu option `4` and enter the other user's username. 
+To share one of your own habits, use menu option `5` and enter the other user's username. 
 The other user must already be registered — it is enough that they logged in once with their username. 
 For example, while logged in as `demo` you can share a habit with `sam`; sam will see it in their list at the next login, and any check-off by either user counts for the group.
 
@@ -131,6 +131,7 @@ python -m pytest tests/ -v
 The suite covers habit creation and tracking, the streak/analytics logic (including edge cases such as skipped periods and multiple completions in the same period),
 the SQLite layer (on a temporary database), the predefined fixture data, and the shared-habit behaviour: membership, visibility for all members, per-member completion records, group streaks with alternating completers, member contributions and the "delete only for me" semantics.
 
+
 ## Design notes
 
 - The **`Habit` class** encapsulates the task specification, periodicity, creation timestamp and the completion records (OOP). 
@@ -139,3 +140,18 @@ the SQLite layer (on a temporary database), the predefined fixture data, and the
   A member leaving a shared habit only removes their membership; the habit is deleted when the last member leaves.
 - The **analytics module** contains only pure functions operating on habit lists (`map`/`filter`/`reduce`), which makes them easy to test and reason about.
 - **Streaks** are computed by mapping completions to calendar period indices, so completing a weekly habit on Monday and then on Friday of the following week still counts as two consecutive weeks, while multiple completions in the same period count once.
+
+
+## Screenshots
+
+Habit list with per-period progress bars, streaks and a shared habit:
+
+![Habit list](screenshots/habit_list.png)
+
+Analytics — Habits by periodicity, Longest streak of all habits, Broken habits:
+
+![Analytics](screenshots/analytics.png)
+
+Full test suite:
+
+![Tests](screenshots/pytest.png)
